@@ -47,13 +47,6 @@ export function AdminDashboard() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
-    // Check admin auth
-    const isAdmin = localStorage.getItem('adminAuth') === 'true';
-    if (!isAdmin) {
-      navigate('/admin/login');
-      return;
-    }
-
     loadDashboardData();
   }, [navigate]);
 
@@ -162,7 +155,7 @@ export function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
+    sessionStorage.removeItem('adminToken');
     navigate('/admin/login');
   };
 

@@ -2,23 +2,20 @@ import { Router, Request, Response } from 'express';
 import { vkMarketService } from '../services/vkMarketService';
 import jwt from 'jsonwebtoken';
 
-const router = Router();
+import { adminPassword, adminUser, signingSecret, verifyAdmin } from '../middlewares/adminAuth';
 
-// Simple admin credentials (в продакшене использовать базу данных)
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'vapc2024';
-const JWT_SECRET = process.env.JWT_SECRET || 'va-pc-admin-secret-2024';
+const router = Router();
 
 // Admin login
 router.post('/admin/login', async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
 
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    if (username === adminUser && password === adminPassword) {
       // Generate JWT token
       const token = jwt.sign(
         { username, role: 'admin' },
-        JWT_SECRET,
+        signingSecret,
         { expiresIn: '24h' }
       );
 
@@ -42,28 +39,9 @@ router.post('/admin/login', async (req: Request, res: Response) => {
   }
 });
 
-// Middleware to verify admin token
-const verifyAdmin = (req: Request, res: Response, next: any) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'No token provided'
-    });
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    (req as any).admin = decoded;
-    next();
-  } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: 'Invalid token'
-    });
-  }
-};
+router.get('/admin/session', verifyAdmin, (_req, res) => {
+  res.json({ success: true });
+});
 
 // Get admin dashboard stats
 router.get('/admin/stats', verifyAdmin, async (req: Request, res: Response) => {

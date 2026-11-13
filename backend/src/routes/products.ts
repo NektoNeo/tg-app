@@ -1,3 +1,4 @@
+import { verifyAdmin } from '../middlewares/adminAuth';
 import { Router, Request, Response } from 'express';
 import { vkMarketService } from '../services/vkMarketService';
 
@@ -100,7 +101,7 @@ router.get('/products/search', async (req: Request, res: Response) => {
 });
 
 // Sync products (force refresh cache)
-router.post('/products/sync', async (req: Request, res: Response) => {
+router.post('/products/sync', verifyAdmin, async (req: Request, res: Response) => {
   try {
     // Clear cache to force fresh data
     vkMarketService.clearCache();
@@ -125,7 +126,7 @@ router.post('/products/sync', async (req: Request, res: Response) => {
 });
 
 // Get cache statistics
-router.get('/products/cache/stats', (req: Request, res: Response) => {
+router.get('/products/cache/stats', verifyAdmin, (req: Request, res: Response) => {
   const stats = vkMarketService.getCacheStats();
   
   res.json({
