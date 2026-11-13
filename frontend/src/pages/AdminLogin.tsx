@@ -1,3 +1,4 @@
+import api from '../services/api';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -19,16 +20,12 @@ export function AdminLogin() {
     setIsLoading(true);
 
     try {
-      // Simple admin authentication (в реальном приложении использовать JWT)
-      if (credentials.username === 'admin' && credentials.password === 'vapc2024') {
-        localStorage.setItem('adminAuth', 'true');
-        toast.success('Успешный вход в админ-панель');
-        navigate('/admin/dashboard');
-      } else {
-        toast.error('Неверные учетные данные');
-      }
-    } catch (error) {
-      toast.error('Ошибка входа');
+      const response = await api.post<{ token: string }>('/admin/login', credentials);
+      sessionStorage.setItem('adminToken', response.data.token);
+      toast.success('Успешный вход в админ-панель');
+      navigate('/admin/dashboard', { replace: true });
+    } catch {
+      toast.error('Вход не выполнен. Проверьте данные и доступность сервера.');
     } finally {
       setIsLoading(false);
     }

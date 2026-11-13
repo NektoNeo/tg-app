@@ -13,7 +13,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Add auth token if available
-    const token = localStorage.getItem('auth_token');
+    const token = sessionStorage.getItem('adminToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,7 +30,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Handle unauthorized access
-      localStorage.removeItem('auth_token');
+      sessionStorage.removeItem('adminToken');
       // Redirect to login if needed
     }
     return Promise.reject(error);

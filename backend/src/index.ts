@@ -1,7 +1,7 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
 import { rateLimit } from 'express-rate-limit';
 // import { logger } from './utils/logger';
 // import { errorHandler } from './middlewares/errorHandler';
@@ -10,7 +10,6 @@ import ordersRouter from './routes/orders';
 import productsRouter from './routes/products';
 import adminRouter from './routes/admin';
 
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;

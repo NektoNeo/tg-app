@@ -1,3 +1,4 @@
+import { verifyAdmin } from '../middlewares/adminAuth';
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import TelegramBot from 'node-telegram-bot-api';
@@ -82,7 +83,7 @@ router.post('/orders', async (req: Request, res: Response) => {
 });
 
 // Get order by ID
-router.get('/orders/:orderId', (req: Request, res: Response) => {
+router.get('/orders/:orderId', verifyAdmin, (req: Request, res: Response) => {
   const { orderId } = req.params;
   const order = orders.get(orderId);
   
@@ -100,7 +101,7 @@ router.get('/orders/:orderId', (req: Request, res: Response) => {
 });
 
 // Update order status
-router.patch('/orders/:orderId/status', (req: Request, res: Response) => {
+router.patch('/orders/:orderId/status', verifyAdmin, (req: Request, res: Response) => {
   const { orderId } = req.params;
   const { status } = req.body;
   
